@@ -36,6 +36,9 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
+	//configuration
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
 	//db
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
