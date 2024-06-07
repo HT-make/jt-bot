@@ -1,8 +1,6 @@
 package htmake.jtbot.discord.commands.global;
 
 import htmake.jtbot.discord.util.ErrorUtil;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -14,18 +12,10 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import java.awt.*;
-import java.util.Collections;
 import java.util.List;
 
 @Component
 public class GlobalCommand extends ListenerAdapter {
-
-    private final ErrorUtil errorUtil;
-
-    public GlobalCommand() {
-        this.errorUtil = new ErrorUtil();
-    }
 
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
