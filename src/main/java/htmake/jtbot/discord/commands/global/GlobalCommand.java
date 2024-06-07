@@ -1,7 +1,6 @@
 package htmake.jtbot.discord.commands.global;
 
 import htmake.jtbot.discord.util.ErrorUtil;
-import htmake.jtbot.discord.util.MessageUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -23,35 +22,14 @@ import java.util.List;
 public class GlobalCommand extends ListenerAdapter {
 
     private final ErrorUtil errorUtil;
-    private final MessageUtil messageUtil;
 
     public GlobalCommand() {
         this.errorUtil = new ErrorUtil();
-        this.messageUtil = new MessageUtil();
     }
 
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         event.deferEdit().queue();
-
-        String component = event.getComponentId();
-
-        if (component.equals("cancel")) {
-            if (messageUtil.validCheck(event.getMessage(), event.getUser().getName())) {
-                errorUtil.sendError(event.getHook(), "제한된 버튼", "이 버튼은 이용할 수 없습니다.");
-                return;
-            }
-
-            messageUtil.remove(event.getUser().getId());
-
-            MessageEmbed embed = new EmbedBuilder()
-                    .setColor(Color.GREEN)
-                    .setDescription("작업이 취소되었습니다.")
-                    .build();
-
-            event.getHook().editOriginalComponents(Collections.emptyList()).queue();
-            event.getHook().editOriginalEmbeds(embed).queue();
-        }
     }
 
     @Override
