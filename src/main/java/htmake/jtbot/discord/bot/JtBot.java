@@ -1,6 +1,8 @@
 package htmake.jtbot.discord.bot;
 
-import htmake.jtbot.discord.bot.properties.DiscordProperties;
+import htmake.jtbot.discord.commands.gemini.GeminiCommand;
+import htmake.jtbot.discord.commands.global.GlobalCommand;
+import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -10,15 +12,15 @@ import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
-import javax.security.auth.login.LoginException;
-
 @Getter
 public class JtBot {
 
     private final ShardManager shardManager;
+    private final Dotenv config;
 
-    public JtBot(DiscordProperties discordProperties) throws LoginException {
-        String token = discordProperties.getKey();
+    public JtBot(){
+        config = Dotenv.configure().load();
+        String token = config.get("TOKEN");
 
         // Build shard manager
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(token);
@@ -30,6 +32,9 @@ public class JtBot {
         shardManager = builder.build();
 
         // Register listeners
-        shardManager.addEventListener();
+        shardManager.addEventListener(
+                new GlobalCommand(),
+                new GeminiCommand()
+        );
     }
 }

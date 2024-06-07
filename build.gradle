@@ -46,7 +46,10 @@ dependencies {
 	implementation 'net.dv8tion:JDA:5.0.0-beta.21'
 
 	//unirest
-	implementation 'com.mashape.unirest:unirest-java:1.4.8'
+	implementation 'com.konghq:unirest-java:3.14.5'
+
+	//detonv
+	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 }
 
 tasks.named('test') {
