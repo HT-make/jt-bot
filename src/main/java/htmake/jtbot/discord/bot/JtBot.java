@@ -2,6 +2,7 @@ package htmake.jtbot.discord.bot;
 
 import htmake.jtbot.discord.commands.gemini.GeminiCommand;
 import htmake.jtbot.discord.commands.global.GlobalCommand;
+import htmake.jtbot.discord.commands.poll.PollCommand;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -34,7 +35,8 @@ public class JtBot {
         // Register listeners
         shardManager.addEventListener(
                 new GlobalCommand(),
-                new GeminiCommand()
+                new GeminiCommand(),
+                new PollCommand()
         );
     }
 }
