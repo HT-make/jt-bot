@@ -3,7 +3,6 @@ package htmake.jtbot.discord.commands.poll.data;
 import lombok.*;
 
 import java.util.Map;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -22,9 +21,9 @@ public class Poll {
 
     private int totalVotes;
 
-    private Map<Integer, Option> options;
+    private Map<Integer, Option> optionById;
 
-    private Set<String> totalVotingUsers;
+    private Map<String, Option> optionByUser;
 
     private int lastIndex;
 }
