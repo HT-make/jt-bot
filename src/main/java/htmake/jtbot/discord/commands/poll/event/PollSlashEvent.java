@@ -50,6 +50,8 @@ public class PollSlashEvent {
         event.replyEmbeds(embed)
                 .setComponents(actionRowList)
                 .queue();
+
+        pollCache.setIndex(pollCache.getIndex() + 1);
     }
 
     private void savePollCache(String id, String title, List<String> optionList, String description, boolean duplication) {
@@ -59,14 +61,13 @@ public class PollSlashEvent {
                 .description(description)
                 .duplication(duplication)
                 .totalVotes(0)
-                .options(toOptions(optionList))
-                .totalVotingUsers(new HashSet<>())
+                .optionById(toOptions(optionList))
+                .optionByUser(new HashMap<>())
                 .lastIndex(optionList.size())
                 .build();
 
         int index = pollCache.getIndex();
         pollCache.put(index, poll);
-        pollCache.setIndex(index + 1);
     }
 
     private Map<Integer, Option> toOptions(List<String> optionList) {
@@ -93,9 +94,11 @@ public class PollSlashEvent {
                 .setTitle(":bar_chart:" + title)
                 .setDescription(description);
 
+        String turnout = "▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯ | 0% (0)";
+
         for (int i = 1; i <= optionList.size(); i++) {
             String option = optionList.get(i - 1);
-            embedBuilder.addField(pollUtil.formatTitle(i, option), "`                    ` | 0% (0)", false);
+            embedBuilder.addField(pollUtil.formatTitle(i, option), turnout, false);
         }
 
         return embedBuilder.build();
