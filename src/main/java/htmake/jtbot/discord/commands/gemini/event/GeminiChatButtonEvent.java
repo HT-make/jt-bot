@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class GeminiChatButtonEvent {
 
@@ -27,20 +26,21 @@ public class GeminiChatButtonEvent {
     }
 
     public void execute(ButtonInteractionEvent event, int chatId, int page) {
-        Optional<Chat> optionalChat = Optional.ofNullable(geminiChatCache.get(chatId));
-        if (optionalChat.isPresent()) {
-            Chat chat = optionalChat.get();
-            MessageEmbed newEmbed = buildEmbed(page, chat);
-
-            int maxPage = chat.getMaxPage();
-            List<Button> buttonList = buttonEmbed(page, maxPage, chatId);
-
-            event.getHook().editOriginalEmbeds(newEmbed)
-                    .setActionRow(buttonList)
-                    .queue();
-        } else {
+        if (!geminiChatCache.containsKey(chatId)){
             errorUtil.sendError(event.getHook(), "호떡이", "대화 내용을 찾을 수 없습니다.");
+            return;
         }
+
+        Chat chat = geminiChatCache.get(chatId);
+
+        MessageEmbed newEmbed = buildEmbed(page, chat);
+
+        int maxPage = chat.getMaxPage();
+        List<Button> buttonList = buttonEmbed(page, maxPage, chatId);
+
+        event.getHook().editOriginalEmbeds(newEmbed)
+                .setActionRow(buttonList)
+                .queue();
     }
 
     private MessageEmbed buildEmbed(int page, Chat chat) {
