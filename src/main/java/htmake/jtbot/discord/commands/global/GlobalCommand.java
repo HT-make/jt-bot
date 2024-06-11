@@ -39,7 +39,7 @@ public class GlobalCommand extends ListenerAdapter {
     private OptionData insertQuestion() {
         return new OptionData(OptionType.STRING, "질문", "질문을 입력해 주세요!")
                 .setRequired(true)
-                .setRequiredLength(1, 1000);
+                .setRequiredLength(1, 250);
     }
 
     private List<OptionData> createPollForm() {

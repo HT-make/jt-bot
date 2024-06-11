@@ -9,6 +9,12 @@ import kong.unirest.UnirestException;
 
 public class HttpClientImpl implements HttpClient {
 
+    public HttpClientImpl() {
+        Unirest.config()
+                .socketTimeout(20000)
+                .connectTimeout(20000);
+    }
+
     @Override
     public HttpResponse<JsonNode> sendPostRequest(String endPoint, String requestBody) {
         try {
