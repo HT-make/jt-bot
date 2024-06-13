@@ -37,6 +37,8 @@ public class GeminiCommand extends ListenerAdapter {
         List<String> componentList = List.of(event.getComponentId().split("-"));
 
         if (componentList.get(0).equals("gemini")) {
+            event.deferEdit().queue();
+
             if (componentList.get(1).equals("chat")){
                 int chatId = Integer.parseInt(componentList.get(2));
                 int page = Integer.parseInt(componentList.get(3));
