@@ -45,15 +45,16 @@ public class PollButtonEvent {
 
         Poll poll = pollCache.get(pollId);
         Option option = poll.getOptionById().get(optionId);
-        Set<String> votingUser = option.getVotingUser();
 
-        if (votingUser.contains(userId)) {
+        if (option.getVotingUser().contains(userId)) {
             removeVote(poll, option, userId);
         } else {
             handleVote(poll, option, userId);
         }
+
         MessageEmbed embed = buildEmbed(poll, event.getMessage().getEmbeds().get(0));
-        List<ActionRow> actionRowList = buildActionRowList(event.getMessage().getButtons(), poll.getOptionById().values());
+        List<Option> optionList = new ArrayList<>(poll.getOptionById().values());
+        List<ActionRow> actionRowList = buildActionRowList(event.getMessage().getButtons(), optionList);
 
         event.getHook().editOriginalEmbeds(embed)
                 .setComponents(actionRowList)
@@ -64,6 +65,10 @@ public class PollButtonEvent {
         poll.setTotalVotes(poll.getTotalVotes() - 1);
         option.setVotes(option.getVotes() - 1);
         option.getVotingUser().remove(userId);
+
+        if (!poll.isDuplication()) {
+            poll.getOptionByUser().remove(userId);
+        }
     }
 
     private void handleVote(Poll poll, Option option, String userId) {
@@ -94,11 +99,9 @@ public class PollButtonEvent {
                 .setDescription(embed.getDescription());
 
         int totalVotes = poll.getTotalVotes();
-        Collection<Option> options = poll.getOptionById().values();
-
         int index = 1;
 
-        for (Option option : options) {
+        for (Option option : poll.getOptionById().values()) {
             String formattedTitle = pollUtil.formatTitle(index++, option.getTitle());
             String bar = drawBar(totalVotes, option.getVotes());
             embedBuilder.addField(formattedTitle, bar, false);
@@ -148,25 +151,22 @@ public class PollButtonEvent {
         return (percentages / 10) * 10 + adjustedUnits;
     }
 
-    private List<ActionRow> buildActionRowList(List<Button> buttonList, Collection<Option> options) {
+    private List<ActionRow> buildActionRowList(List<Button> buttonList, List<Option> optionList) {
         List<ActionRow> actionRowList = new ArrayList<>();
         List<Button> newButtonList = new ArrayList<>();
 
-        int index = 0;
-
-        for (Option option : options) {
-            Button button = buttonList.get(index);
+        for (int i = 0; i < optionList.size(); i++) {
+            Option option = optionList.get(i);
+            Button button = buttonList.get(i);
             newButtonList.add(Button.secondary(button.getId(), String.valueOf(option.getVotes())).withEmoji(button.getEmoji()));
-
-            if (++index % 5 == 0) {
-                actionRowList.add(ActionRow.of(newButtonList));
-                newButtonList = new ArrayList<>();
-            }
         }
 
-        if (!newButtonList.isEmpty()) {
-            actionRowList.add(ActionRow.of(newButtonList));
+        if (optionList.size() < 10) {
+            newButtonList.add(buttonList.get(buttonList.size() - 2));
         }
+        newButtonList.add(buttonList.get(buttonList.size() - 1));
+
+        pollUtil.setActionRowList(actionRowList, newButtonList);
 
         return actionRowList;
     }
