@@ -1,6 +1,6 @@
 package htmake.jtbot.discord.commands.global;
 
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -17,12 +17,12 @@ import java.util.List;
 public class GlobalCommand extends ListenerAdapter {
 
     @Override
-    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
         event.deferEdit().queue();
     }
 
     @Override
-    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
+    public void onModalInteraction(ModalInteractionEvent event) {
         event.deferEdit().queue();
     }
 
