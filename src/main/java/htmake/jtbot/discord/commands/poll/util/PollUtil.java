@@ -1,5 +1,11 @@
 package htmake.jtbot.discord.commands.poll.util;
 
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class PollUtil {
 
     public String formatTitle(int number, String option) {
@@ -35,5 +41,22 @@ public class PollUtil {
             case 10 -> "\uD83D\uDD1F";
             default -> null;
         };
+    }
+
+    public void setActionRowList(List<ActionRow> actionRowList, List<Button> buttonList) {
+        List<Button> currentRowButtonList = new ArrayList<>();
+
+        for (Button button : buttonList) {
+            currentRowButtonList.add(button);
+
+            if (currentRowButtonList.size() == 5) {
+                actionRowList.add(ActionRow.of(currentRowButtonList));
+                currentRowButtonList = new ArrayList<>();
+            }
+        }
+
+        if (!currentRowButtonList.isEmpty()) {
+            actionRowList.add(ActionRow.of(currentRowButtonList));
+        }
     }
 }
