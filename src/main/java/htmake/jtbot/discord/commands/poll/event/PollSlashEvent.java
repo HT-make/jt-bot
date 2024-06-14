@@ -91,7 +91,7 @@ public class PollSlashEvent {
     private MessageEmbed buildEmbed(String title, List<String> optionList, String description) {
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setColor(Color.GREEN)
-                .setTitle(":bar_chart:" + title)
+                .setTitle(":bar_chart: " + title)
                 .setDescription(description);
 
         String turnout = "▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯ | 0% (0)";
@@ -108,19 +108,22 @@ public class PollSlashEvent {
         List<ActionRow> actionRowList = new ArrayList<>();
         List<Button> buttonList = new ArrayList<>();
 
+        int index = pollCache.getIndex();
+
         for (int i = 1; i <= size; i++) {
             String emoji = pollUtil.getUnicode(i);
-            buttonList.add(Button.secondary("poll-" + pollCache.getIndex() + "-" + i, "0").withEmoji(Emoji.fromUnicode(emoji)));
+            buttonList.add(Button.secondary("poll-" + index + "-" + i, "0").withEmoji(Emoji.fromUnicode(emoji)));
 
-            if (i % 5 == 0) {
-                actionRowList.add(ActionRow.of(buttonList));
-                buttonList = new ArrayList<>();
-            }
         }
 
-        if (!buttonList.isEmpty()) {
-            actionRowList.add(ActionRow.of(buttonList));
+        if (size < 10) {
+            Button addOptionButton = Button.secondary("poll-add-" + index, Emoji.fromUnicode("➕"));
+            buttonList.add(addOptionButton);
         }
+        Button settingsButton = Button.secondary("poll-setting-" + index, Emoji.fromUnicode("⚙"));
+        buttonList.add(settingsButton);
+
+        pollUtil.setActionRowList(actionRowList, buttonList);
 
         return actionRowList;
     }
