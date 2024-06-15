@@ -1,8 +1,8 @@
 package htmake.jtbot.discord.commands.poll.event;
 
-import htmake.jtbot.discord.commands.poll.cache.PollCache;
+import htmake.jtbot.discord.commands.poll.util.PollUtil;
 import htmake.jtbot.discord.util.ErrorUtil;
-import htmake.jtbot.global.cache.CacheFactory;
+import kotlin.Pair;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
@@ -11,28 +11,19 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 public class AddOptionButtonEvent {
 
     private final ErrorUtil errorUtil;
-
-    private final PollCache pollCache;
+    private final PollUtil pollUtil;
 
     public AddOptionButtonEvent() {
         this.errorUtil = new ErrorUtil();
-
-        this.pollCache = CacheFactory.pollCache;
+        this.pollUtil = new PollUtil();
     }
 
     public void execute(ButtonInteractionEvent event, int pollId) {
-        if (!pollCache.containsKey(pollId)) {
-            event.deferEdit().queue();
-            errorUtil.sendError(event.getHook(), "투표 항목 추가", "투표를 찾을 수 없습니다.");
-            return;
-        }
+        Pair<Boolean, String> check = pollUtil.pollValidCheck(pollId, event.getUser().getId());
 
-        String author = pollCache.get(pollId).getAuthor();
-        String userId = event.getUser().getId();
-
-        if (!author.equals(userId)) {
+        if (!check.getFirst()) {
             event.deferEdit().queue();
-            errorUtil.sendError(event.getHook(), "투표 항목 추가", "권한이 없습니다.");
+            errorUtil.sendError(event.getHook(), "투표 항목 추가", check.getSecond());
             return;
         }
 
