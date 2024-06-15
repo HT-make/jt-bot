@@ -15,5 +15,7 @@ public class Option {
 
     private int votes;
 
+    private String turnout;
+
     private Set<String> votingUser;
 }
