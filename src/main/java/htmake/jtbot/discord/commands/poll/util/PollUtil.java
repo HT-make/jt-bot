@@ -1,5 +1,8 @@
 package htmake.jtbot.discord.commands.poll.util;
 
+import htmake.jtbot.discord.commands.poll.cache.PollCache;
+import htmake.jtbot.global.cache.CacheFactory;
+import kotlin.Pair;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
@@ -7,6 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PollUtil {
+
+    private final PollCache pollCache;
+
+    public PollUtil() {
+        this.pollCache = CacheFactory.pollCache;
+    }
 
     public String formatTitle(int number, String option) {
         String emoji = "";
@@ -58,5 +67,19 @@ public class PollUtil {
         if (!currentRowButtonList.isEmpty()) {
             actionRowList.add(ActionRow.of(currentRowButtonList));
         }
+    }
+
+    public Pair<Boolean, String> pollValidCheck(int pollId, String userId) {
+        if (!pollCache.containsKey(pollId)) {
+            return new Pair<>(false, "투표를 찾을 수 없습니다.");
+        }
+
+        String author = pollCache.get(pollId).getAuthor();
+
+        if (!author.equals(userId)) {
+            return new Pair<>(false, "권한이 없습니다.");
+        }
+
+        return new Pair<>(true, "Valid");
     }
 }
