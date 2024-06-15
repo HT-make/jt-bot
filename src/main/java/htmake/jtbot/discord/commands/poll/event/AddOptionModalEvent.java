@@ -19,6 +19,8 @@ import java.util.List;
 
 public class AddOptionModalEvent {
 
+    private static final String DEFAULT_TURNOUT = "`                    ` | 0% (0)";
+
     private final PollUtil pollUtil;
 
     private final PollCache pollCache;
@@ -49,6 +51,7 @@ public class AddOptionModalEvent {
         Option option = Option.builder()
                 .title(optionName)
                 .votes(0)
+                .turnout(DEFAULT_TURNOUT)
                 .votingUser(new HashSet<>())
                 .build();
 
@@ -64,8 +67,7 @@ public class AddOptionModalEvent {
 
         originalEmbed.getFields().forEach(embedBuilder::addField);
 
-        String turnout = "▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯ | 0% (0)";
-        embedBuilder.addField(pollUtil.formatTitle(originalEmbed.getFields().size() + 1, optionName), turnout, false);
+        embedBuilder.addField(pollUtil.formatTitle(originalEmbed.getFields().size() + 1, optionName), DEFAULT_TURNOUT, false);
 
         return embedBuilder.build();
     }
@@ -81,7 +83,7 @@ public class AddOptionModalEvent {
         }
 
         String emoji = pollUtil.getUnicode(newIndex);
-        Button newButton = Button.secondary("poll-" + pollId + "-" + newIndex, "0").withEmoji(Emoji.fromUnicode(emoji));
+        Button newButton = Button.secondary("poll-voting" + pollId + "-" + newIndex, "0").withEmoji(Emoji.fromUnicode(emoji));
         newButtonList.add(newButton);
 
         if (newButtonList.size() < 10) {

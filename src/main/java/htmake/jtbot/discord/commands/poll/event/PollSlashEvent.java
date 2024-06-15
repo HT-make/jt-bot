@@ -19,6 +19,8 @@ import java.util.List;
 
 public class PollSlashEvent {
 
+    private static final String DEFAULT_TURNOUT = "`                    ` | 0% (0)";
+
     private final ErrorUtil errorUtil;
     private final PollUtil pollUtil;
 
@@ -77,8 +79,9 @@ public class PollSlashEvent {
 
         for (String title : optionList) {
             Option option = Option.builder()
-                    .title(title)
+                    .title(title.trim())
                     .votes(0)
+                    .turnout(DEFAULT_TURNOUT)
                     .votingUser(new HashSet<>())
                     .build();
 
@@ -94,11 +97,9 @@ public class PollSlashEvent {
                 .setTitle(":bar_chart: " + title)
                 .setDescription(description);
 
-        String turnout = "▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯ | 0% (0)";
-
         for (int i = 1; i <= optionList.size(); i++) {
             String option = optionList.get(i - 1);
-            embedBuilder.addField(pollUtil.formatTitle(i, option), turnout, false);
+            embedBuilder.addField(pollUtil.formatTitle(i, option), DEFAULT_TURNOUT, false);
         }
 
         return embedBuilder.build();
@@ -112,15 +113,14 @@ public class PollSlashEvent {
 
         for (int i = 1; i <= size; i++) {
             String emoji = pollUtil.getUnicode(i);
-            buttonList.add(Button.secondary("poll-" + index + "-" + i, "0").withEmoji(Emoji.fromUnicode(emoji)));
-
+            buttonList.add(Button.secondary("poll-voting-" + index + "-" + i, "0").withEmoji(Emoji.fromUnicode(emoji)));
         }
 
         if (size < 10) {
             Button addOptionButton = Button.secondary("poll-add-" + index, Emoji.fromUnicode("➕"));
             buttonList.add(addOptionButton);
         }
-        Button settingsButton = Button.secondary("poll-setting-" + index, Emoji.fromUnicode("⚙"));
+        Button settingsButton = Button.secondary("poll-settings-" + index, Emoji.fromUnicode("⚙"));
         buttonList.add(settingsButton);
 
         pollUtil.setActionRowList(actionRowList, buttonList);
