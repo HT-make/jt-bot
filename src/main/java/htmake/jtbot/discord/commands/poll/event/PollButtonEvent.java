@@ -20,8 +20,8 @@ public class PollButtonEvent {
 
     private static final int MAX_BAR_LENGTH = 20;
     private static final int BAR_SEGMENT_SIZE = 5;
-    private static final String FILLED_CELL = "▮";
-    private static final String EMPTY_CELL = "▯";
+    private static final String FILLED_CELL = "█";
+    private static final String EMPTY_CELL = " ";
 
     private final ErrorUtil errorUtil;
     private final PollUtil pollUtil;
@@ -39,7 +39,7 @@ public class PollButtonEvent {
         String userId = event.getUser().getId();
 
         if (!pollCache.containsKey(pollId)) {
-            errorUtil.sendError(event.getHook(), "투표", "해당 투표를 이용할 수 없습니다.");
+            errorUtil.sendError(event.getHook(), "투표", "투표를 찾을 수 없습니다.");
             return;
         }
 
@@ -103,16 +103,17 @@ public class PollButtonEvent {
 
         for (Option option : poll.getOptionById().values()) {
             String formattedTitle = pollUtil.formatTitle(index++, option.getTitle());
-            String bar = drawBar(totalVotes, option.getVotes());
-            embedBuilder.addField(formattedTitle, bar, false);
+            String turnout = getTurnout(totalVotes, option.getVotes());
+            option.setTurnout(turnout);
+            embedBuilder.addField(formattedTitle, turnout, false);
         }
 
         return embedBuilder.build();
     }
 
-    private String drawBar(int totalVotes, int votes) {
+    private String getTurnout(int totalVotes, int votes) {
         if (totalVotes == 0) {
-            return getBar(0) + " | 0% (" + votes + ")";
+            return drawBar(0) + " | 0% (" + votes + ")";
         }
 
         double percentages = ((double) votes / totalVotes) * 100;
@@ -121,15 +122,17 @@ public class PollButtonEvent {
 
         String formattedPercentages = adjustPercentages == percentages ? String.valueOf(adjustPercentages) : String.format("%.2f", percentages);
 
-        return getBar(drawCell) + " | " + formattedPercentages + "% (" + votes + ")";
+        return drawBar(drawCell) + " | " + formattedPercentages + "% (" + votes + ")";
     }
 
-    private String getBar(int filledCells) {
+    private String drawBar(int filledCells) {
         StringBuilder bar = new StringBuilder(MAX_BAR_LENGTH);
 
+        bar.append("`");
         for (int i = 0; i < MAX_BAR_LENGTH; i++) {
             bar.append(i < filledCells ? FILLED_CELL : EMPTY_CELL);
         }
+        bar.append("`");
 
         return bar.toString();
     }
