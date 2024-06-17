@@ -14,6 +14,11 @@ public class ErrorUtil {
         event.replyEmbeds(embed).queue();
     }
 
+    public void sendEphemeralError(SlashCommandInteractionEvent event, String title, String description) {
+        MessageEmbed embed = buildEmbed(title, description);
+        event.replyEmbeds(embed).setEphemeral(true).queue();
+    }
+
     public void sendError(InteractionHook hook, String title, String description) {
         MessageEmbed embed = buildEmbed(title, description);
         hook.setEphemeral(true);
