@@ -58,6 +58,12 @@ public class MessageInfoSlashEvent {
                 .setAuthor(event.getUser().getName(), null, event.getUser().getAvatarUrl())
                 .setTitle("예약된 메시지 목록");
 
+        if (messages.size() == 0) {
+            embedBuilder.setDescription("예약된 메시지가 없습니다.");
+            event.replyEmbeds(embedBuilder.build()).setEphemeral(true).queue();
+            return;
+        }
+
         List<Message> messageCacheList = new ArrayList<>();
 
         for (int i = 0; i < messages.size(); i++) {
@@ -79,17 +85,11 @@ public class MessageInfoSlashEvent {
         messageCache.put(event.getUser().getId(), messageCacheList);
 
         List<Button> buttons = new ArrayList<>();
-        if (messages.size() > 0) {
-            buttons.add(Button.primary("message-button-cancel", "취소하기"));
+        buttons.add(Button.primary("message-button-cancel", "취소하기"));
 
-            event.replyEmbeds(embedBuilder.build())
-                    .addActionRow(buttons)
-                    .setEphemeral(true).queue();
-
-        } else {
-            embedBuilder.setDescription("예약된 메시지가 없습니다.");
-            event.replyEmbeds(embedBuilder.build()).setEphemeral(true).queue();
-        }
+        event.replyEmbeds(embedBuilder.build())
+                .addActionRow(buttons)
+                .setEphemeral(true).queue();
     }
 
     private List<ScheduledMessage> toMessageList(JSONArray messageList) {
