@@ -83,7 +83,7 @@ public class AddOptionModalEvent {
         }
 
         String emoji = pollUtil.getUnicode(newIndex);
-        Button newButton = Button.secondary("poll-voting" + pollId + "-" + newIndex, "0").withEmoji(Emoji.fromUnicode(emoji));
+        Button newButton = Button.secondary("poll-voting-" + pollId + "-" + newIndex, "0").withEmoji(Emoji.fromUnicode(emoji));
         newButtonList.add(newButton);
 
         if (newButtonList.size() < 10) {
